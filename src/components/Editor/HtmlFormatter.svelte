@@ -5,7 +5,6 @@
     import 'highlight.js/styles/atom-one-dark-reasonable.css';
     hljs.registerLanguage('xml', xml);
     let b_str=""
-    //let str="<div>Hello!</div><div class=''>sdklfjh skdjfh sdfs<br>sdfls kdfjsldk jsldf jlskdjsldkfl skdjfl ksdflksjdf lskdjfl skdfj slkjzelrkzerlzkjerlzkerlzkej rlzk jlze rlzkejr lkzelrkj<br>sdfksjdfh sdf<br>sdfkjsd<span class=\"font-mono px-2 text-gray-700 border border-gray-200 bg-gray-200\">fhsdf</span><br><span class=\"font-mono px-2 text-gray-700 border border-gray-200 bg-gray-200\">dskfjshdfkjsdf</span><br>zerlzkerjzelr</div><div class=''>sdfsdfs&nbsp;</div><div>Hello!</div><div class=''>sdklfjh skdjfh sdfs<br>sdfls kdfjsldk jsldf jlskdjsldkfl skdjfl ksdflksjdf lskdjfl skdfj slkjzelrkzerlzkjerlzkerlzkej rlzk jlze rlzkejr lkzelrkj<br>sdfksjdfh sdf<br>sdfkjsd<span class=\"font-mono px-2 text-gray-700 border border-gray-200 bg-gray-200\">fhsdf</span><br><span class=\"font-mono px-2 text-gray-700 border border-gray-200 bg-gray-200\">dskfjshdfkjsdf</span><br>zerlzkerjzelr</div><div class=''>sdfsdfs&nbsp;</div>"	
     
     export let str = ""
     let empty = true
@@ -82,9 +81,11 @@ function copyFunction() {
 </script>
 
 
+
 <div class="bg-gray-800 p-6 relative rounded overflow-auto">
-    <div class="{empty? 'hidden':''} {copied? 'text-gray-500':'text-blue-300'} {copied? '':'cursor-pointer'} absolute sticky top-0 right-0 hover:{copied? '':'underline'} hover:{copied? '':'text-blue-200'} mb-4" on:click="{()=>copyFunction()}" use:SetBut>Copy</div>
+    <div class="{empty? 'hidden':''} {copied? 'text-gray-500':'text-blue-300'} {copied? '':'cursor-pointer'} text-right w-full sticky top-0 right-0 hover:{copied? '':'underline'} hover:{copied? '':'text-blue-200'} mb-4" on:click="{()=>copyFunction()}" use:SetBut>Copy</div>
     <pre class="max-h-screen">
         <code class="bg-gray-800 text-white " use:SetPre>{@html hljs.highlight('xml', b_str).value}</code>  
     </pre>
 </div>
+

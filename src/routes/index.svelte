@@ -6,6 +6,6 @@
 	<title>Tailwind Editor</title>
 </svelte:head>
 
-<div class="max-w-screen-xl mx-auto py-10">
+<div class="px-20 py-10">
 	<Editor />
 </div>
