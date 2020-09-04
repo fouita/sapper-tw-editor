@@ -3,7 +3,7 @@
 	import ContentEditor from './ContentEditor.svelte'
 	import ToolBar from '../ToolBar/ToolBar.svelte'
 	import { tick } from 'svelte/internal';		
-	
+	import HtmlFormatter from './HtmlFormatter.svelte'
 	let arr_html = [
 		{html:`Hello!`, klass:'p-2'},
 		{
@@ -73,11 +73,8 @@
 			<ContentEditor bind:html={h.html} bind:gklass={h.klass} on:enter={() => addNewElm(i)} on:merge_prev={evt => mergePrev(evt,i)} on:select={showToolBar} on:hideselect={hideSelect} />
 		{/each}
 	</div>
-	<div class="break-all">
-		<pre class="whitespace-pre-line" >
-			<code >{gen_code}</code>
-		</pre>
-	</div>
+		<HtmlFormatter str={gen_code}/>
+	
 </div>
 
 					  
