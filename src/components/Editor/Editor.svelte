@@ -49,8 +49,16 @@
 		href =  evt.detail.href
 	}
 	
-	function hideSelect(){
+	function hideSelect(){	
 		show_toolbar=false
+	}
+
+	function mergePrev(evt,i){
+		if(i>0){
+			arr_html[i-1].html += evt.detail  
+			arr_html.splice(i,1)
+			arr_html = arr_html
+		}
 	}
 	
 </script>
@@ -62,7 +70,7 @@
 <div class="flex">
 	<div use:setListEditors class="w-2/3 flex-shrink-0">
 		{#each arr_html as h,i}
-			<ContentEditor bind:html={h.html} bind:gklass={h.klass} on:enter={() => addNewElm(i)} on:select={showToolBar} on:hideselect={hideSelect} />
+			<ContentEditor bind:html={h.html} bind:gklass={h.klass} on:enter={() => addNewElm(i)} on:merge_prev={evt => mergePrev(evt,i)} on:select={showToolBar} on:hideselect={hideSelect} />
 		{/each}
 	</div>
 	<div class="break-all">

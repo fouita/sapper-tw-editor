@@ -43,7 +43,7 @@
 	async function handleKeydown(e){
 
 		// console.log(e.keyCode)
-		if([38,40].includes(e.keyCode)){
+		if([38,40,8].includes(e.keyCode)){
 
 			let selection = window.getSelection()
 			// up key
@@ -75,7 +75,7 @@
 						last_child = last_child.nodeName == '#text'||last_child.nodeName=='BR' ? last_child : last_child.childNodes[0] // TODO - handle br!
 						console.log("LAST CHILD ... ", last_child, children)
 						
-						window.getSelection().setBaseAndExtent(last_child, last_child.textContent.length, last_child, last_child.textContent.length);
+						selection.setBaseAndExtent(last_child, last_child.textContent.length, last_child, last_child.textContent.length);
 						return false
 					}
 				}
@@ -102,9 +102,43 @@
 				}
 			}
 			// check ctrkey is pressed
-			
+
+			// check if key 8 is pressed and whether we need to merge the two divs! or delete the div!
+			if(e.keyCode == 8){
+				console.log('B_index --> ', b_index, b_node , ' Start __i ',start_i)
+				if(start_i==0 && b_index==0){
+					console.log("MERGE PREV")
+					// remove div and merge with previous one if exist
+					// maybe await settimeout!
+					// get node from previous element
+					let l_node_index 
+					let l_node_end 
+					let pv_elm = elm_node.previousElementSibling
+					if(pv_elm && pv_elm.isContentEditable){
+						if(!pv_elm.childNodes.length)
+							pv_elm.focus()
+						else{
+							l_node_index = pv_elm.childNodes.length-1
+							// console.log(pv_elm.childNodes.length)
+							l_node_end = pv_elm.childNodes[pv_elm.childNodes.length-1].textContent.length
+						} 
+					}	
+					
+					dispatch('merge_prev', html)
+					await (new Promise(r => setTimeout(r)))
+					if(l_node_index){
+						let l_node = pv_elm.childNodes[l_node_index]
+						if(l_node.nodeName !== '#text' && l_node.nodeName !== 'BR'){
+								l_node = l_node.childNodes[0]
+						}
+						selection.setBaseAndExtent(l_node, l_node_end, l_node, l_node_end);
+					}
+					e.preventDefault()
+				}
+			}
 		}
 
+		// TODO - split divs!
 		if(e.keyCode == 13 && e.shiftKey == false){
 			dispatch('enter')
 			e.preventDefault()
@@ -123,17 +157,20 @@
 					
 			let b_index = getIndex(b_node)
 			// let e_index = getIndex(e_node)
+			let div_elm = b_node.nodeName != '#text' ? b_node.parentNode : b_node.parentNode.parentNode
 			await (new Promise(r => setTimeout(r)))
 			
-			// update the html after adding <br> if needed!
-			console.log("B_ NODE ---> ", b_node)
-			console.log("PREV B_ NODE ---> ", b_node.previousElementSibling)
 			// not in rooot
 			if(b_node.nodeName != "DIV" &&  ((b_node.parentNode && b_node.parentNode.tagName != 'DIV') || !['BR','#text'].includes(b_node.nodeName))){
-				console.log("ENTER --> ", b_node.nodeName)
 				let parent = b_node.nodeName != '#text' ? b_node : b_node.parentNode
-				let div_elm = parent.parentNode
-				
+				//div_elm = parent.parentNode ? parent.parentNode : div_elm
+				if(!parent.parentNode) {
+					refresh()
+					await (new Promise(r => setTimeout(r)))
+					let p_elm = div_elm.childNodes[b_index]
+					selection.setBaseAndExtent(p_elm, 0, p_elm, 0);
+					return
+				}
 				// parent child text nodes
 				let children = [...parent.childNodes]
 				let elms = []
@@ -151,7 +188,7 @@
 				arr_elms.splice(b_index, 1,...elms)
 				refresh()
 				await (new Promise(r => setTimeout(r)))
-				if(!div_elm) return
+				
 				let p_elm = div_elm.childNodes[elms[0].tag == 'BR' ? b_index: b_index+2]
 				console.log("P ELM --> ",b_index, div_elm.childNodes, p_elm)
 				selection.setBaseAndExtent(p_elm, 0, p_elm, 0);
@@ -504,6 +541,7 @@
 	
 	function getIndex(node){
 		let p_node = node
+		if(node.nodeName == 'DIV') return 0
 		if(['SPAN','BR','A'].includes(node.parentNode.tagName)){
 			p_node = node.parentNode
 		}
