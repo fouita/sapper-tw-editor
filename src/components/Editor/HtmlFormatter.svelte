@@ -13,7 +13,6 @@
     $: if (str!=""){empty=false}else{empty=true}
     
     $: if(mounted) {
-        console.log("STR ",  str)
         b_str = Beautify(str)
     }
     
@@ -89,5 +88,3 @@ function copyFunction() {
     </pre>
 </div>
 </div>
-
-
