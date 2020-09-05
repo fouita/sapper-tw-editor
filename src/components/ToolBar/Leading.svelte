@@ -5,8 +5,9 @@
 	export let setClass = ''
 	$: leading_class = klass.split(' ').find(c => c.startsWith('leading')) || ''
 	$: selected = leading_class.replace('leading-','')
-
+	let open = false 
 	function selectClass(evt){
+		open = false
 		setClass('leading-'+evt.detail)
 	}
 
@@ -39,7 +40,7 @@
 </script>
 
 <div class="flex h-full">
-	<DropDown {list} on:select={selectClass} {selected}>
+	<DropDown {list} bind:open={open} on:select={selectClass} {selected}>
 		<div class="pl-2 pr-3 py-1 h-full flex items-center">
 			<LineHeightIcon />
 		</div>

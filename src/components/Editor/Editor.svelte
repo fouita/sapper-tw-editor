@@ -13,12 +13,17 @@
 	]
 	
 	$: gen_code = arr_html.map(h => `<div class='${h.klass}'>${h.html}</div>`).join('\n')
-	async function addNewElm(i){
+	async function addNewElm(i,evt){
 		
-		arr_html.splice(i+1,0,{html: '',klass:'p-2'})
+		// split 
+
+		arr_html.splice(i,1,
+			{html: evt.detail.html,klass: evt.detail.klass},
+			{html: evt.detail.next_html,klass: evt.detail.klass},
+		)
 		// auto focus
 		arr_html = arr_html
-		await tick()
+		await (new Promise(r => setTimeout(r)))
 		list_editors.children[i+1].focus()
 		
 	}
@@ -70,7 +75,7 @@
 <div class="flex">
 	<div use:setListEditors class="w-1/2 flex-shrink-0">
 		{#each arr_html as h,i}
-			<ContentEditor bind:html={h.html} bind:gklass={h.klass} on:enter={() => addNewElm(i)} on:merge_prev={evt => mergePrev(evt,i)} on:select={showToolBar} on:hideselect={hideSelect} />
+			<ContentEditor bind:html={h.html} bind:gklass={h.klass} on:enter={(evt) => addNewElm(i,evt)} on:merge_prev={evt => mergePrev(evt,i)} on:select={showToolBar} on:hideselect={hideSelect} />
 		{/each}
 	</div>
 		<HtmlFormatter str={gen_code}/>

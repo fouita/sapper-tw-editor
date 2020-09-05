@@ -30,9 +30,12 @@
 		arr_elms = n_elms
 	}
 	let mounted = false
-	$: if(html && mounted){
+	$: if(mounted){
 		// generate arr_elms
-		generateArr()
+		if(html)
+			generateArr()
+		else 
+			arr_elms = []
 	}
 
 	onMount(() => {
@@ -42,105 +45,99 @@
 	
 	async function handleKeydown(e){
 
-		// console.log(e.keyCode)
-		if([38,40,8].includes(e.keyCode)){
+		let selection = window.getSelection()
+		// up key
+		let b_node = selection.baseNode
+		let e_node = selection.extentNode
+		let start_i = selection.baseOffset
+		let end_i = selection.extentOffset
+		let elm_node = (b_node.tagName&&b_node.tagName=='DIV') ? b_node : b_node.parentNode.tagName == 'DIV' ? b_node.parentNode : b_node.parentNode.parentNode
+		
+		let b_index = getIndex(b_node)
+		let e_index = getIndex(e_node)
 
-			let selection = window.getSelection()
-			// up key
-			let b_node = selection.baseNode
-			let e_node = selection.extentNode
-			let start_i = selection.baseOffset
-			let end_i = selection.extentOffset
-			let elm_node = (b_node.tagName&&b_node.tagName=='DIV') ? b_node : b_node.parentNode.tagName == 'DIV' ? b_node.parentNode : b_node.parentNode.parentNode
+
+		if(e.keyCode == 38){ 
+			if (b_node == e_node && start_i == 0 && (b_index <= 1)){
+				// move to the previous node
+				let pv_elm = elm_node.previousElementSibling
+				if(pv_elm && pv_elm.isContentEditable){
+					pv_elm.focus()
+					e.preventDefault()
+					e.stopPropagation()
+					// set selection to the last child of pv_elm
+					let children = [...pv_elm.childNodes]
+					let last_child = children[children.length-1]
+					if(!last_child) return
+					last_child = last_child.nodeName == '#text'||last_child.nodeName=='BR' ? last_child : last_child.childNodes[0] // TODO - handle br!
+					
+					selection.setBaseAndExtent(last_child, last_child.textContent.length, last_child, last_child.textContent.length);
+					return false
+				}
+			}
 			
-			let b_index = getIndex(b_node)
-			let e_index = getIndex(e_node)
-
-			if(e.keyCode == 38){ 
-				// console.log(e.keyCode," start_i ", start_i, ' b_node ',b_node , ' e_node ',e_node)
-				console.log('elm node ... ', elm_node)
-				console.log('B index --> ', b_index)
-				if (b_node == e_node && start_i == 0 && (b_index <= 1)){
-					// move to the previous node
-					let pv_elm = elm_node.previousElementSibling
-					console.log("PV ELM -------------- ", pv_elm)
-					if(pv_elm && pv_elm.isContentEditable){
-						pv_elm.focus()
-						console.log("FOCUS *---> PV ELM ", pv_elm)
+		}
+		// down key
+		if(e.keyCode == 40){ 
+			// get index
+			if (b_node == e_node){
+				if(b_index == arr_elms.length-1 || (b_index == arr_elms.length-2 && arr_elms[arr_elms.length-1].tag == 'BR') || b_node == elm_node){
+					let next_elm = elm_node.nextElementSibling
+					if(next_elm && next_elm.isContentEditable){
+						next_elm.focus()
 						e.preventDefault()
 						e.stopPropagation()
-						// set selection to the last child of pv_elm
-						let children = [...pv_elm.childNodes]
-						let last_child = children[children.length-1]
-						last_child = last_child.nodeName == '#text'||last_child.nodeName=='BR' ? last_child : last_child.childNodes[0] // TODO - handle br!
-						console.log("LAST CHILD ... ", last_child, children)
-						
-						selection.setBaseAndExtent(last_child, last_child.textContent.length, last_child, last_child.textContent.length);
 						return false
 					}
 				}
-				
-			}
-			// down key
-			if(e.keyCode == 40){ 
-				// get index
-				if (b_node == e_node){
-					// move to the previous node
-					console.log('B_INDEX ... ', b_index)
-					console.log('E_INDEX ... ', e_index)
-					console.log('ARR ELMS ... ', arr_elms)
-					if(b_index == arr_elms.length-1 || (b_index == arr_elms.length-2 && arr_elms[arr_elms.length-1].tag == 'BR') || b_node == elm_node){
-						let next_elm = elm_node.nextElementSibling
-						console.log("FOCUS NEXT !!")
-						if(next_elm && next_elm.isContentEditable){
-							next_elm.focus()
-							e.preventDefault()
-							e.stopPropagation()
-							return false
-						}
-					}
-				}
-			}
-			// check ctrkey is pressed
-
-			// check if key 8 is pressed and whether we need to merge the two divs! or delete the div!
-			if(e.keyCode == 8){
-				console.log('B_index --> ', b_index, b_node , ' Start __i ',start_i)
-				if(start_i==0 && b_index==0){
-					console.log("MERGE PREV")
-					// remove div and merge with previous one if exist
-					// maybe await settimeout!
-					// get node from previous element
-					let l_node_index 
-					let l_node_end 
-					let pv_elm = elm_node.previousElementSibling
-					if(pv_elm && pv_elm.isContentEditable){
-						if(!pv_elm.childNodes.length)
-							pv_elm.focus()
-						else{
-							l_node_index = pv_elm.childNodes.length-1
-							// console.log(pv_elm.childNodes.length)
-							l_node_end = pv_elm.childNodes[pv_elm.childNodes.length-1].textContent.length
-						} 
-					}	
-					
-					dispatch('merge_prev', html)
-					await (new Promise(r => setTimeout(r)))
-					if(l_node_index){
-						let l_node = pv_elm.childNodes[l_node_index]
-						if(l_node.nodeName !== '#text' && l_node.nodeName !== 'BR'){
-								l_node = l_node.childNodes[0]
-						}
-						selection.setBaseAndExtent(l_node, l_node_end, l_node, l_node_end);
-					}
-					e.preventDefault()
-				}
 			}
 		}
+		// check ctrkey is pressed
 
-		// TODO - split divs!
+		// check if key 8 is pressed and whether we need to merge the two divs! or delete the div!
+		if(e.keyCode == 8){
+			if(start_i==0 && b_index==0 || b_index == -1){
+				let l_node_index 
+				let l_node_end 
+				let pv_elm = elm_node.previousElementSibling
+				if(pv_elm && pv_elm.isContentEditable){
+					if(!pv_elm.childNodes.length)
+						pv_elm.focus()
+					else{
+						l_node_index = pv_elm.childNodes.length-1
+						l_node_end = pv_elm.childNodes[pv_elm.childNodes.length-1].textContent.length
+					} 
+				}	
+				
+				dispatch('merge_prev', html)
+				await (new Promise(r => setTimeout(r)))
+				if(l_node_index !== undefined){
+					let l_node = pv_elm.childNodes[l_node_index]
+					if(l_node.nodeName !== '#text' && l_node.nodeName !== 'BR'){
+							l_node = l_node.childNodes[0]
+					}
+					selection.setBaseAndExtent(l_node, l_node_end, l_node, l_node_end);
+				}
+				e.preventDefault()
+			}
+		}
+		
+
 		if(e.keyCode == 13 && e.shiftKey == false){
-			dispatch('enter')
+			// get all the elements from the selected
+			let elm_html = ''
+			let next_html = ''
+			let elm_index = b_index==-1 ? arr_elms.length-1 : b_index
+			if(arr_elms.length>0){
+				
+				let n_arr = splitArr(arr_elms,elm_index,start_i)
+				arr_elms.splice(elm_index,1,...n_arr)
+				
+				let s_index = elm_index+(start_i==0 ? 0 :1)
+				elm_html = extractHTML(arr_elms.slice(0, s_index))
+				next_html = extractHTML(arr_elms.slice(s_index, arr_elms.length))
+			}
+			dispatch('enter',{html: elm_html, next_html, klass: gklass})
 			e.preventDefault()
 			e.stopPropagation()
 			return false
@@ -149,14 +146,6 @@
 		// get index -- get text -- get parent span -- add br -- duplicate the span set cursor!
 		if(e.keyCode == 13 && e.shiftKey == true){
 			
-			// e.preventDefault()
-			// e.stopPropagation()
-			
-			let selection = window.getSelection()
-			let b_node = selection.baseNode
-					
-			let b_index = getIndex(b_node)
-			// let e_index = getIndex(e_node)
 			let div_elm = b_node.nodeName != '#text' ? b_node.parentNode : b_node.parentNode.parentNode
 			await (new Promise(r => setTimeout(r)))
 			
@@ -182,15 +171,12 @@
 						elms.push({tag: "BR", txt: ""})
 					}
 				}
-				
-				// TODO - remove selected element!
 
 				arr_elms.splice(b_index, 1,...elms)
 				refresh()
 				await (new Promise(r => setTimeout(r)))
 				
 				let p_elm = div_elm.childNodes[elms[0].tag == 'BR' ? b_index: b_index+2]
-				console.log("P ELM --> ",b_index, div_elm.childNodes, p_elm)
 				selection.setBaseAndExtent(p_elm, 0, p_elm, 0);
 			}
 
@@ -199,22 +185,29 @@
 
 	}
 
-	async function refresh(){
-
-	 	let str = ''
-	  arr_elms.forEach(elm => {
-			if(elm.tag == 'BR'){
-				str += '<br>'
-			}else if(elm.tag == 'A'){
-				str += `<a href=${elm.href} target='_blank' class="${elm.klass}">${elm.txt}</a>`
-			}else if(elm.klass){
-				str += `<span class="${elm.klass}">${elm.txt}</span>`
-			}else{
-				str += elm.txt
-			}
+	function extractHTML(arr){
+		let str = ''
+		arr.forEach(elm => {
+				let elm_txt = elm.txt
+				if(elm.txt){
+					elm_txt = elm.txt.replaceAll('<','&lt;').replaceAll('>','&gt;')
+				}
+				if(elm.tag == 'BR'){
+					str += '<br>'
+				}else if(elm.tag == 'A'){
+					str += `<a href=${elm.href} target='_blank' class="${elm.klass}">${elm_txt}</a>`
+				}else if(elm.klass){
+					str += `<span class="${elm.klass}">${elm_txt}</span>`
+				}else{
+					str += elm_txt
+				}
 		})
-		
-		html = str
+		return str
+	}
+
+	function refresh(){
+
+		html = extractHTML(arr_elms)
 
 	}
 
@@ -230,19 +223,11 @@
 			b_node: selection.baseNode,
 			e_node: selection.extentNode
 		}
-		// console.log("H Selection ... ", h_selection)
-		///await (new Promise(r => setTimeout(r)))
-		
-		///window.getSelection().removeAllRanges();
-		//window.getSelection().setBaseAndExtent(h_selection.b_node, h_selection.start_i, h_selection.e_node, h_selection.end_i);
-
 	}
 	
 	 
 	async function setClass(class_name,link){
 		
-		// console.log("SETCLASS H Selection ... ", h_selection)
-
 		arr_elms.forEach(e => delete e.selected)
 		let selection = window.getSelection() 
 		let selection_txt = selection.toString()
@@ -316,7 +301,6 @@
 
 		await (new Promise(r => setTimeout(r)))
 		
-		console.log("SELECTION .... ",start_node, p_selector.s_start, end_node, p_selector.s_end)
 		window.getSelection().removeAllRanges();
 		window.getSelection().setBaseAndExtent(start_node, p_selector.s_start, end_node, p_selector.s_end);
 		
@@ -366,12 +350,9 @@
 	}
 	
 	function mergeArr(p_selector){
-		// console.log("ARR _ELM ",arr_elms)
 		let n_arr = [{...arr_elms[0]}]
 		
 		if(arr_elms[0].selected){
-			// arr_elms[0].select_range = [0,arr_elms[0].txt.length-1]
-			//arr_elms[0].select_start = 0
 			p_selector.s_start = 0
 			p_selector.a_start = 0
 			p_selector.s_end = arr_elms[0].txt.length
@@ -418,7 +399,6 @@
 			
 		}
 		
-	 // console.log("NARRRR ",n_arr)
 		arr_elms = n_arr
 	}
 
@@ -470,8 +450,8 @@
 	}
 
 	
-	let reg_txt_size = /^text\-(sm|base|xl|2xl|3xl)/
-	let g_reg_txt_size = /text\-(sm|base|xl|2xl|3xl)/
+	let reg_txt_size = /^text\-(sm|base|xl|3xl|4xl)/
+	let g_reg_txt_size = /text\-(sm|base|xl|3xl|4xl)/
 	let reg_leading = /^leading\-(none|tight|snug|normal|relaxed|loose)/
 	let reg_position = /^text\-(left|right|center)/
 	let reg_txt_color = /^text\-(gray|red|orange|yellow|green|blue|indigo|purple|pink)/
@@ -516,6 +496,7 @@
 	// a_i arr_index
 	// s_i string_index
 	function splitArr(arr, a_i, s_i, e_i){
+
 		let start = s_i
 		let end = e_i||arr[a_i].txt.length
 		if(e_i && e_i<s_i){
@@ -539,9 +520,10 @@
 		return arr1
 	}
 	
+	// return last element if index is
 	function getIndex(node){
 		let p_node = node
-		if(node.nodeName == 'DIV') return 0
+		if(node.nodeName == 'DIV') return -1
 		if(['SPAN','BR','A'].includes(node.parentNode.tagName)){
 			p_node = node.parentNode
 		}
@@ -602,17 +584,19 @@
 	
 	let l_selected = ''
 	async function fireSelect(e){
-		await (new Promise(r => setTimeout(r)))
-		h_selection = null
-		await (new Promise(r => setTimeout(r)))
+		
 		let selection = window.getSelection() 
 		let selection_txt = selection.toString()
+		let b_node = selection.baseNode
+		let e_node = selection.extentNode
+		if(b_node.nodeName == 'DIV' || e_node.nodeName == 'DIV'){
+			hideSelect()
+			return
+		}
+		h_selection = null
 		if(selection_txt){				
-			let b_node = selection.baseNode
-			let e_node = selection.extentNode
 			let b_index = getIndex(b_node)
 			let e_index = getIndex(e_node)
-
 			let base_node = b_index < e_index ? b_node : e_node
 			holdSelection(selection)
 			// extract classes to pass them to the toolbar!
@@ -631,10 +615,9 @@
 		dispatch('hideselect')
 	}
 
-	
 </script>
 
-<div bind:innerHTML={html} placeholder='Type your text here' spellcheck="false" contenteditable="true" on:keydown={handleKeydown}  class="focus:outline-none {gklass}" on:mouseup={fireSelect} on:keyup={fireSelect} >
+<div bind:innerHTML={html} placeholder='Type your text here' spellcheck="false" contenteditable="true" on:keydown={handleKeydown}  class="focus:outline-none {gklass}" on:mouseup={fireSelect} on:keyup={fireSelect}  >
 	
 </div>
 					  

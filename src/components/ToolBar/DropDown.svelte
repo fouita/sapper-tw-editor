@@ -3,6 +3,7 @@
 	import List from './List.svelte'
 	import {fly} from 'svelte/transition'
 	let klass = ''
+	export let open = false
 	export {klass as class}
 	export let selected
 	// let dispatch = createEventDispatcher()
@@ -34,15 +35,14 @@
 		}
 	]
 
-	let show_list = false
 	function toggleList(e){
-		show_list= !show_list
+		open= !open
 		e.preventDefault()
 		e.stopPropagation()
 	}
 	
 	function hideList(){
-		show_list = false
+		open = false
 	}
 	
 </script>
@@ -52,7 +52,7 @@
 	<div class="cursor-pointer flex h-full" on:click={toggleList}>
 		<slot>Click To show</slot>
 	</div>
-	{#if show_list}
+	{#if open}
 	<div transition:fly class="absolute -ml-1 z-20 {klass}">
 		<List {list} {selected} on:select />
 	</div>

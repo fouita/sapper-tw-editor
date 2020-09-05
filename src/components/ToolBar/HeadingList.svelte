@@ -27,11 +27,11 @@
 		},
 		{
 			label:'Heading 1',
-			value:'text-3xl'
+			value:'text-4xl'
 		},
 		{
 			label:'Heading 2',
-			value:'text-2xl'
+			value:'text-3xl'
 		},
 		{
 			label:'Heading 3',
@@ -47,14 +47,17 @@
 		}
 	]
 
+	let open = false
 	function selectClass(evt){
 		selected_val = evt.detail
+		console.log("OPEN ... ", open)
+		open = false
 		setClass(evt.detail)
 	}
 </script>
 
 <div class="flex h-full">
-	<DropDown {list} selected={selected_val} on:select={selectClass} class="w-32">
+	<DropDown {list} bind:open={open} selected={selected_val} on:select={selectClass} class="w-32">
 		<div class="pl-2 pr-3 py-1 h-full flex items-center">
 			{selected_label} <DownIcon />
 		</div>
