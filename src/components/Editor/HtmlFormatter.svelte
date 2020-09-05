@@ -3,9 +3,9 @@
     import {onMount} from 'svelte'
     import xml from 'highlight.js/lib/languages/xml'
     import 'highlight.js/styles/atom-one-dark-reasonable.css';
+    import CopyIcon from '../Icons/CopyIcon.svelte'
     hljs.registerLanguage('xml', xml);
     let b_str=""
-    //let str="<div>Hello!</div><div class=''>sdklfjh skdjfh sdfs<br>sdfls kdfjsldk jsldf jlskdjsldkfl skdjfl ksdflksjdf lskdjfl skdfj slkjzelrkzerlzkjerlzkerlzkej rlzk jlze rlzkejr lkzelrkj<br>sdfksjdfh sdf<br>sdfkjsd<span class=\"font-mono px-2 text-gray-700 border border-gray-200 bg-gray-200\">fhsdf</span><br><span class=\"font-mono px-2 text-gray-700 border border-gray-200 bg-gray-200\">dskfjshdfkjsdf</span><br>zerlzkerjzelr</div><div class=''>sdfsdfs&nbsp;</div><div>Hello!</div><div class=''>sdklfjh skdjfh sdfs<br>sdfls kdfjsldk jsldf jlskdjsldkfl skdjfl ksdflksjdf lskdjfl skdfj slkjzelrkzerlzkjerlzkerlzkej rlzk jlze rlzkejr lkzelrkj<br>sdfksjdfh sdf<br>sdfkjsd<span class=\"font-mono px-2 text-gray-700 border border-gray-200 bg-gray-200\">fhsdf</span><br><span class=\"font-mono px-2 text-gray-700 border border-gray-200 bg-gray-200\">dskfjshdfkjsdf</span><br>zerlzkerjzelr</div><div class=''>sdfsdfs&nbsp;</div>"	
     
     export let str = ""
     let empty = true
@@ -62,7 +62,6 @@ function SetPre(n){
 }
 function SetBut(n){
     but = n
-    but.innerHTML="Copy"
 }
 
 function copyFunction() {
@@ -73,18 +72,22 @@ function copyFunction() {
   textArea.select();
   document.execCommand("copy");
   textArea.remove()
-  but.innerHTML="Copied.."
-  setTimeout(()=>but.innerHTML="Copy",5000)
   copied =true
   setTimeout(()=>copied=false,5000)
 }
 
 </script>
 
-
-<div class="bg-gray-800 p-6 relative rounded overflow-auto">
-    <div class="{empty? 'hidden':''} {copied? 'text-gray-500':'text-blue-300'} {copied? '':'cursor-pointer'} absolute sticky top-0 right-0 hover:{copied? '':'underline'} hover:{copied? '':'text-blue-200'} mb-4" on:click="{()=>copyFunction()}" use:SetBut>Copy</div>
-    <pre class="max-h-screen">
-        <code class="bg-gray-800 text-white " use:SetPre>{@html hljs.highlight('xml', b_str).value}</code>  
+<div class="w-1/2 px-2 h-screen pb-24 relative">
+<div class="bg-gray-800 p-6 rounded overflow-auto max-h-full">
+    <div class="absolute justify-center items-center right-0 flex mr-10">
+        <div class="absolute {copied? 'z-10':''} {copied? '':'opacity-0'} transform duration-1000  {copied? '-translate-y-6':''} text-blue-300 font-semibold text-sm">Copied!</div>
+        <div class="{copied? '':'z-10'} {empty? 'hidden':''} {copied? '':'cursor-pointer'}" on:click="{()=>copyFunction()}" use:SetBut>  <CopyIcon {copied}/></div>
+    </div>
+    <pre class="">
+        <code class="bg-gray-800 text-white" use:SetPre>{@html hljs.highlight('xml', b_str).value}</code>  
     </pre>
 </div>
+</div>
+
+

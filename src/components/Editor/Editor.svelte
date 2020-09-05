@@ -60,7 +60,7 @@
 {/if}
 
 <div class="flex">
-	<div use:setListEditors class="w-2/3 flex-shrink-0">
+	<div use:setListEditors class="w-1/2 flex-shrink-0">
 		{#each arr_html as h,i}
 			<ContentEditor bind:html={h.html} bind:gklass={h.klass} on:enter={() => addNewElm(i)} on:select={showToolBar} on:hideselect={hideSelect} />
 		{/each}
