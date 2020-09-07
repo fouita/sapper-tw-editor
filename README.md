@@ -6,7 +6,7 @@ Sapper application using [tailwind-editor](https://github.com/fouita/tailwind-ed
 
 ## Demo
 
-Use it with editor-tw.fouita.com
+Use it with [editor-tw.fouita.com](https://editor-tw.fouita.com)
 
 
 ## About
