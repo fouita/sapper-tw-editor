@@ -3,7 +3,7 @@
     import {onMount} from 'svelte'
     import xml from 'highlight.js/lib/languages/xml'
     import 'highlight.js/styles/atom-one-dark-reasonable.css';
-    import CopyIcon from '../Icons/CopyIcon.svelte'
+    import CopyIcon from './Icons/CopyIcon.svelte'
     hljs.registerLanguage('xml', xml);
     let b_str=""
     
