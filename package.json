@@ -1,6 +1,6 @@
 {
-  "name": "TODO",
-  "description": "TODO",
+  "name": "sapper-tw-editor",
+  "description": "sapper application for tailwind editor component, generate tailwind code",
   "version": "0.0.1",
   "scripts": {
     "dev": "sapper dev",
