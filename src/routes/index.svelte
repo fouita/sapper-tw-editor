@@ -30,6 +30,11 @@
 	<title>Tailwind Editor</title>
 </svelte:head>
 
+<div class="flex flex-row-reverse px-20 py-2">
+	<a href="https://github.com/fouita/tailwind-editor" target="_blank">
+		<img alt="github" src="https://img.icons8.com/fluent/32/000000/github.png"/>
+	</a>
+</div>
 <div class="px-20 py-10 flex">
 	<div class="flex-shrink-0 w-1/2"> 
 		<Editor bind:html={html} {arr_html} />
