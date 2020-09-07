@@ -78,13 +78,13 @@ function copyFunction() {
 </script>
 
 <div class="w-1/2 px-2 h-screen pb-24 relative">
-<div class="bg-gray-800 p-6 rounded overflow-auto max-h-full">
+<div class="p-6 rounded overflow-auto max-h-full">
     <div class="absolute justify-center items-center right-0 flex mr-10">
         <div class="absolute {copied? 'z-10':''} {copied? '':'opacity-0'} transform duration-1000  {copied? '-translate-y-6':''} text-blue-300 font-semibold text-sm">Copied!</div>
         <div class="{copied? '':'z-10'} {empty? 'hidden':''} {copied? '':'cursor-pointer'}" on:click="{()=>copyFunction()}" use:SetBut>  <CopyIcon {copied}/></div>
     </div>
     <pre class="">
-        <code class="bg-gray-800 text-white" use:SetPre>{@html hljs.highlight('xml', b_str).value}</code>  
+        <code class="" use:SetPre>{@html hljs.highlight('xml', b_str).value}</code>  
     </pre>
 </div>
 </div>
