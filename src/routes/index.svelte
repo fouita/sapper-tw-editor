@@ -16,8 +16,14 @@
 		{html:``, klass:'p-2'},
 		{html:`<span class="font-bold">Our Roadmap</span>`, klass:'p-2 text-xl'},
 		{html:`1. Add some list
-  <br>2. Add embedded image and video
+  <br>2. Add embedded <span class="line-through">image</span> and video
   <br>3. highlight code with just tailwind`, klass:'p-2 text-base'},
+		{html:``, klass:'p-2'},
+		{html:`<img src="https://uploads-ssl.webflow.com/5d123a0e13543973a9665271/5d8bb7272a544b4c1e9aef3a_new-sign-up-prompt-graphic-p-800.png" class="" alt="image">
+  <br>
+  <br>
+  <br>
+  <span class="bg-yellow-200">Insert Image url to add new one!</span>`, klass:'p-2 text-sm text-center'},
 		{html:``, klass:'p-2'},
 		{html:`This editor is built by 
   <a href="https://fouita.com" target="_blank" class="underline text-blue-500 link">fouita</a> team
