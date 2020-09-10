@@ -11,4 +11,4 @@ Use it with [editor-tw.fouita.com](https://editor-tw.fouita.com)
 
 ## About
 
-[Fouita : UI framework for svelte + tailwind components](fouita.com)
+[Fouita : UI framework for svelte + tailwind components](https://fouita.com)
