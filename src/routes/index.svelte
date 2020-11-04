@@ -23,7 +23,7 @@
   <br>
   <br>
   <br>
-  <span class="bg-yellow-200">Insert Image url to add new one!</span>`, klass:'p-2 text-sm text-center'},
+  <span class="bg-yellow-200">Insert Image url to  add new one!</span>`, klass:'p-2 text-sm text-center'},
 		{html:``, klass:'p-2'},
 		{html:`This editor is built by 
   <a href="https://fouita.com" target="_blank" class="underline text-blue-500 link">fouita</a> team
@@ -35,7 +35,6 @@
 <svelte:head>
 	<title>Tailwind Editor</title>
 </svelte:head>
-
 <div class="flex flex-row-reverse px-20 py-2">
 	<a href="https://github.com/fouita/tailwind-editor" target="_blank">
 		<img alt="github" src="https://img.icons8.com/fluent/32/000000/github.png"/>
